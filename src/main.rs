@@ -3,6 +3,7 @@ use handler::{catcher::AppCatcher, routes::Router};
 use rocket::{fairing::AdHoc, Build, Rocket};
 
 mod config;
+mod data;
 mod db;
 mod handler;
 
