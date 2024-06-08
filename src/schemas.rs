@@ -1,5 +1,5 @@
 diesel::table! {
-    user(uuid) {
+    users(uuid) {
         uuid -> Uuid,
         login -> Varchar,
         secret -> Text,

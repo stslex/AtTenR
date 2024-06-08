@@ -7,14 +7,14 @@ use super::{
 };
 use crate::diesel::query_dsl::methods::FilterDsl;
 use crate::diesel::RunQueryDsl;
-use crate::{schemas::user, Conn};
+use crate::{schemas::users, Conn};
 
 #[async_trait]
 impl UserDatabase for Conn {
     async fn create_user(&self, user: UserEntityCreate) -> Result<UserEntity, UserDatabaseError> {
         self.0
             .run(move |db| {
-                diesel::insert_into(user::table)
+                diesel::insert_into(users::table)
                     .values(&user)
                     .get_result::<UserEntity>(db)
                     .map_err(|err| {
@@ -29,8 +29,8 @@ impl UserDatabase for Conn {
         let uuid = Uuid::parse_str(uuid).map_err(|_| UserDatabaseError::UuidParseError)?;
         self.0
             .run(move |db| {
-                user::table
-                    .filter(user::uuid.eq(uuid))
+                users::table
+                    .filter(users::uuid.eq(uuid))
                     .first::<UserEntity>(db)
                     .map_err(|err| {
                         eprintln!("Error getting user: {}", err);
@@ -44,8 +44,8 @@ impl UserDatabase for Conn {
         let login = login.to_owned();
         self.0
             .run(move |db| {
-                user::table
-                    .filter(user::login.eq(login))
+                users::table
+                    .filter(users::login.eq(login))
                     .first::<UserEntity>(db)
                     .map_err(|err| {
                         eprintln!("Error getting user: {}", err);
