@@ -1,4 +1,4 @@
-use rocket::{post, routes, Build, Rocket};
+use rocket::{Build, Rocket};
 
 use super::AuthRoute;
 

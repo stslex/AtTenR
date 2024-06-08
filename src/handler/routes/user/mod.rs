@@ -1,4 +1,4 @@
-use rocket::{get, routes, Build, Rocket};
+use rocket::{Build, Rocket};
 
 use super::response::ApiResponse;
 

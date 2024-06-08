@@ -1,15 +1,33 @@
+use crate::schemas::user;
 use uuid::Uuid;
 
-pub struct UserEntityCreate<'a> {
-    uuid: Uuid,
-    name: &'a str,
-    email: &'a str,
-}
-
+#[derive(Queryable, PartialEq, Debug, Clone)]
 pub struct UserEntity {
-    id: i32,
-    name: String,
-    email: String,
+    #[diesel(column_name = "uuid")]
+    pub uuid: Uuid,
+    #[diesel(column_name = "login")]
+    pub login: String,
+    #[diesel(column_name = "secret")]
+    pub secret: String,
+    #[diesel(column_name = "username")]
+    pub username: String,
 }
 
-pub enum UserDatabaseError {}
+#[derive(Queryable, Insertable, PartialEq, Debug)]
+#[diesel(table_name = user)]
+pub struct UserEntityCreate {
+    #[diesel(column_name = "login")]
+    pub login: String,
+    #[diesel(column_name = "secret")]
+    pub secret: String,
+    #[diesel(column_name = "username")]
+    pub username: String,
+}
+
+#[derive(Debug)]
+pub enum UserDatabaseError {
+    UserAlreadyExists,
+    UserNotFound,
+    UuidParseError,
+    DatabaseError,
+}

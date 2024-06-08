@@ -1,15 +1,13 @@
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use rocket::{Build, Rocket};
-use rocket_sync_db_pools::database;
 
-#[database("diesel_postgres_pool")]
-pub struct DbConn(pub diesel::PgConnection);
+use crate::Conn;
 
 const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 
 pub async fn run_db_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
     println!("Running database migrations");
-    let conn = DbConn::get_one(&rocket).await.expect("database connection");
+    let conn = Conn::get_one(&rocket).await.expect("database connection");
     conn.run(|conn| {
         // Run pending migrations
         match conn.run_pending_migrations(MIGRATIONS) {
