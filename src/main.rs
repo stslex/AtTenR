@@ -1,23 +1,18 @@
-use db::{get_db, AppDb};
-use routes::RouterSetup;
-use std::sync::Arc;
+use db::{run_db_migrations, DbConn};
+use handler::{catcher::AppCatcher, routes::Router};
+use rocket::{fairing::AdHoc, Build, Rocket};
 
+mod config;
 mod db;
-mod routes;
+mod handler;
 
-#[derive(Clone)]
-struct AppState {
-    db: AppDb,
-}
+#[rocket::launch]
+async fn launch() -> Rocket<Build> {
+    dotenv::dotenv().ok();
 
-#[tokio::main]
-async fn main() {
-    let app_db = get_db().await;
-    let state = Arc::new(AppState { db: app_db });
-    let router = state.create_router();
-
-    let tcp_listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
-    axum::serve(tcp_listener, router);
+    rocket::custom(config::from_env())
+        .attach(DbConn::fairing())
+        .attach(AdHoc::on_ignite("Database Migrations", run_db_migrations))
+        .mount_catcher()
+        .mount_routes()
 }

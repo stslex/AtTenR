@@ -2,3 +2,4 @@
 /docker-compose.yml
 /.idea
 /Cargo.lock
+/.env
