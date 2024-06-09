@@ -2,7 +2,7 @@ name: Deploy Test
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -71,7 +71,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           key: ${{ secrets.SERVER_SSH }}
           script: |
-            cd atten_dev
-            docker compose pull atten_dev
-            docker compose down atten_dev
-            docker compose up atten_dev -d
+            cd atten
+            docker compose pull atten_dev_server
+            docker compose down atten_dev_server
+            docker compose up atten_dev_server -d

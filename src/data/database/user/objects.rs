@@ -1,4 +1,4 @@
-use crate::schemas::user;
+use crate::schemas::users;
 use uuid::Uuid;
 
 #[derive(Queryable, PartialEq, Debug, Clone)]
@@ -14,7 +14,7 @@ pub struct UserEntity {
 }
 
 #[derive(Queryable, Insertable, PartialEq, Debug)]
-#[diesel(table_name = user)]
+#[diesel(table_name = users)]
 pub struct UserEntityCreate {
     #[diesel(column_name = "login")]
     pub login: String,

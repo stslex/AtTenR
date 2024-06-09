@@ -9,4 +9,4 @@ RUN apt update -y
 RUN apt upgrade -y
 RUN apt install libpq5 -y
 COPY --from=build /code/target/release/atten_r /atten_r
-CMD [ "/pro_selection" ]
+CMD [ "/atten_r" ]
