@@ -1,11 +1,19 @@
-use objects::{UserAuthError, UserAuthRequest, UserAuthResposne};
+use objects::{
+    UserAuthError, UserAuthResponse, UserLoginRequest, UserRegistrationError,
+    UserRegistrationRequest,
+};
 
+mod jwt;
 pub mod objects;
 mod repository;
 
 trait AuthRepository {
-    async fn create_user<'a>(
+    async fn registrarion<'a>(
         &self,
-        user: UserAuthRequest<'a>,
-    ) -> Result<UserAuthResposne, UserAuthError>;
+        user: UserRegistrationRequest<'a>,
+    ) -> Result<UserAuthResponse, UserRegistrationError>;
+    async fn login<'a>(
+        &self,
+        user: UserLoginRequest<'a>,
+    ) -> Result<UserAuthResponse, UserAuthError>;
 }

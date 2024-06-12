@@ -24,7 +24,7 @@ pub struct UserEntityCreate {
     pub username: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum UserDatabaseError {
     UserAlreadyExists,
     UserNotFound,
