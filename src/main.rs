@@ -13,6 +13,7 @@ mod data;
 pub mod db;
 mod handler;
 mod schemas;
+pub mod utils;
 
 #[rocket::launch]
 async fn launch() -> Rocket<Build> {
