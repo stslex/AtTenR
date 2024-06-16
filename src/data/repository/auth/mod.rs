@@ -7,7 +7,7 @@ mod jwt;
 pub mod objects;
 mod repository;
 
-trait AuthRepository {
+pub trait AuthRepository {
     async fn registrarion<'a>(
         &self,
         user: UserRegistrationRequest<'a>,

@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use diesel::connection;
 
     use crate::data::database::{
         test::database_test_utls::run_migration_get_conn,
