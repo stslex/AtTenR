@@ -1,5 +1,7 @@
 use std::env;
 
+use crate::config::JWT_REFRESH_SECRET;
+
 use super::{
     internal_objects::{RefreshToken, TokenGenerationModel},
     objects::JwtGeneratorError,
@@ -8,7 +10,7 @@ use super::{
 
 impl<'a> JwtGenerator<String> for RefreshToken<'a> {
     async fn generate(&self) -> Result<String, JwtGeneratorError> {
-        let secret = env::var("JWT_REFRESH_SECRET").map_err(|err| {
+        let secret = env::var(JWT_REFRESH_SECRET).map_err(|err| {
             println!("JWT_REFRESH_SECRET not found {}", err);
             JwtGeneratorError::InvalidEnvSecret
         });

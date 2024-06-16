@@ -7,6 +7,7 @@ use user::UserRouter;
 mod auth;
 pub mod response;
 mod user;
+mod validators;
 
 pub trait Router {
     fn mount_routes(self) -> Self;

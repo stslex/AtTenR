@@ -1,10 +1,11 @@
-use rocket::futures::{FutureExt, TryFutureExt};
+use rocket::futures::TryFutureExt;
 use rocket::serde::json::Json;
 use rocket::{Build, Rocket};
 
-use crate::data::repository::auth::objects::{UserAuthError, UserLoginRequest};
+use crate::data::repository::auth::objects::UserLoginRequest;
 use crate::data::repository::auth::AuthRepository;
 use crate::handler::routes::auth::request::LoginRequest;
+use crate::handler::routes::validators::ApiKey;
 use crate::utils::{AppHasher, ErrorParser};
 use crate::Conn;
 
@@ -22,6 +23,7 @@ impl AuthRoute for Rocket<Build> {
 #[post("/login", format = "json", data = "<login_request>")]
 async fn login<'a>(
     login_request: Option<Json<LoginRequest<'a>>>,
+    _api_key_validator: ApiKey,
     db: Conn,
 ) -> ApiResponse<'static, Json<LoginOk>> {
     let login_request = if login_request.is_none() {

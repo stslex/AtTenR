@@ -6,10 +6,11 @@ use super::{
     internal_objects::{AccessToken, TokenGenerationModel},
     JwtGenerator,
 };
+use crate::config::JWT_ACCESS_SECRET;
 
 impl<'a> JwtGenerator<String> for AccessToken<'a> {
     async fn generate(&self) -> Result<String, super::objects::JwtGeneratorError> {
-        let secret = env::var("JWT_ACCESS_SECRET").map_err(|err| {
+        let secret = env::var(JWT_ACCESS_SECRET).map_err(|err| {
             println!("JWT_ACCESS_SECRET not found {}", err);
             JwtGeneratorError::InvalidEnvSecret
         });

@@ -1,53 +1,34 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, panic::catch_unwind};
 
-use chrono::Duration;
+use chrono::{Duration, Utc};
 use hmac::{digest::KeyInit, Hmac};
 use jwt::SignWithKey;
 use sha2::Sha256;
+
+use crate::config::{JWT_PROPERY_EXP, JWT_PROPERY_USERNAME, JWT_PROPERY_UUID};
 
 use super::{internal_objects::TokenGenerationModel, objects::JwtGeneratorError, JwtGenerator};
 
 impl<'a> JwtGenerator<String> for TokenGenerationModel<'a> {
     async fn generate(&self) -> Result<String, JwtGeneratorError> {
-        println!("Generating token for user: {}", self.username);
+        let days: Duration = catch_unwind(|| Duration::days(self.exp_days))
+            .map_err(|_| JwtGeneratorError::DurationOutOfBound)?;
 
-        let days: Duration = match std::panic::catch_unwind(|| Duration::days(self.exp_days)) {
-            Ok(result) => result,
-            Err(_) => {
-                println!("Failed to create duration / out of bound");
-                return Err(JwtGeneratorError::DurationOutOfBound);
-            }
-        };
-        let exp_time = match chrono::Utc::now().checked_add_signed(days) {
-            Some(result) => result,
-            None => {
-                println!("Failed to add days");
-                return Err(JwtGeneratorError::TimeCreationError);
-            }
-        }
-        .timestamp();
+        let exp_time = Utc::now()
+            .checked_add_signed(days)
+            .ok_or(JwtGeneratorError::TimeCreationError)?
+            .timestamp();
 
-        println!("exp_time: {}", exp_time);
-
-        let key: Hmac<Sha256> = match Hmac::new_from_slice(self.env_secret) {
-            Ok(result) => result,
-            Err(_) => {
-                println!("Failed to create key");
-                return Err(JwtGeneratorError::CreateKey);
-            }
-        };
+        let key: Hmac<Sha256> =
+            Hmac::new_from_slice(self.env_secret).map_err(|_| JwtGeneratorError::CreateKey)?;
 
         let mut claims = BTreeMap::new();
-        claims.insert("uuid", self.uuid.to_owned());
-        claims.insert("username", self.username.to_owned());
-        claims.insert("exp_time", exp_time.to_string());
+        claims.insert(JWT_PROPERY_UUID, self.uuid.to_owned());
+        claims.insert(JWT_PROPERY_USERNAME, self.username.to_owned());
+        claims.insert(JWT_PROPERY_EXP, exp_time.to_string());
 
-        match claims.sign_with_key(&key) {
-            Ok(result) => Ok(result),
-            Err(_) => {
-                println!("Failed to sign with key");
-                Err(JwtGeneratorError::SignWithKey)
-            }
-        }
+        claims
+            .sign_with_key(&key)
+            .map_err(|_| JwtGeneratorError::SignWithKey)
     }
 }
