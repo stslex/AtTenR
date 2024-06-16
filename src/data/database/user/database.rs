@@ -9,7 +9,6 @@ use crate::diesel::query_dsl::methods::FilterDsl;
 use crate::diesel::RunQueryDsl;
 use crate::{schemas::users, Conn};
 
-#[async_trait]
 impl UserDatabase for Conn {
     async fn create_user(&self, user: UserEntityCreate) -> Result<UserEntity, UserDatabaseError> {
         self.0
@@ -19,7 +18,13 @@ impl UserDatabase for Conn {
                     .get_result::<UserEntity>(db)
                     .map_err(|err| {
                         eprintln!("Error creating user: {}", err);
-                        UserDatabaseError::DatabaseError
+                        match err {
+                            diesel::result::Error::DatabaseError(
+                                diesel::result::DatabaseErrorKind::UniqueViolation,
+                                _,
+                            ) => UserDatabaseError::UserAlreadyExists,
+                            _ => UserDatabaseError::DatabaseError,
+                        }
                     })
             })
             .await
@@ -32,9 +37,12 @@ impl UserDatabase for Conn {
                 users::table
                     .filter(users::uuid.eq(uuid))
                     .first::<UserEntity>(db)
-                    .map_err(|err| {
-                        eprintln!("Error getting user: {}", err);
-                        UserDatabaseError::DatabaseError
+                    .map_err(|err| match err {
+                        diesel::result::Error::NotFound => UserDatabaseError::UserNotFound,
+                        _ => {
+                            eprintln!("Error getting user: {}", err);
+                            UserDatabaseError::DatabaseError
+                        }
                     })
             })
             .await
@@ -47,9 +55,33 @@ impl UserDatabase for Conn {
                 users::table
                     .filter(users::login.eq(login))
                     .first::<UserEntity>(db)
-                    .map_err(|err| {
-                        eprintln!("Error getting user: {}", err);
-                        UserDatabaseError::DatabaseError
+                    .map_err(|err| match err {
+                        diesel::result::Error::NotFound => UserDatabaseError::UserNotFound,
+                        _ => {
+                            eprintln!("Error getting user: {}", err);
+                            UserDatabaseError::DatabaseError
+                        }
+                    })
+            })
+            .await
+    }
+
+    async fn get_user_by_username<'a>(
+        &self,
+        username: &'a str,
+    ) -> Result<UserEntity, UserDatabaseError> {
+        let username = username.to_owned();
+        self.0
+            .run(move |db| {
+                users::table
+                    .filter(users::username.eq(username))
+                    .first::<UserEntity>(db)
+                    .map_err(|err| match err {
+                        diesel::result::Error::NotFound => UserDatabaseError::UserNotFound,
+                        _ => {
+                            eprintln!("Error getting user: {}", err);
+                            UserDatabaseError::DatabaseError
+                        }
                     })
             })
             .await

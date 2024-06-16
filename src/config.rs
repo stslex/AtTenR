@@ -26,3 +26,10 @@ pub fn from_env() -> Figment {
         .merge(("port", port))
         .merge(("databases", databases))
 }
+
+pub const JWT_ACCESS_SECRET: &'static str = "JWT_ACCESS_SECRET";
+pub const JWT_REFRESH_SECRET: &'static str = "JWT_REFRESH_SECRET";
+
+pub const JWT_PROPERY_UUID: &'static str = "uuid";
+pub const JWT_PROPERY_EXP: &'static str = "exp_time";
+pub const JWT_PROPERY_USERNAME: &'static str = "username";
