@@ -1,6 +1,6 @@
 use objects::{
-    UserAuthError, UserAuthResponse, UserLoginRequest, UserRegistrationError,
-    UserRegistrationRequest,
+    UserAuthError, UserAuthResponse, UserLoginRequest, UserRefreshTokenError,
+    UserRefreshTokenResponse, UserRegistrationError, UserRegistrationRequest,
 };
 
 mod jwt;
@@ -16,4 +16,8 @@ pub trait AuthRepository {
         &self,
         user: UserLoginRequest<'a>,
     ) -> Result<UserAuthResponse, UserAuthError>;
+    async fn refresh_token<'a>(
+        &self,
+        uuid: &'a str,
+    ) -> Result<UserRefreshTokenResponse, UserRefreshTokenError>;
 }

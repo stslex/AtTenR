@@ -30,6 +30,19 @@ pub struct UserAuthResponse {
     pub refresh_token: String,
 }
 
+pub struct UserRefreshTokenResponse {
+    pub uuid: uuid::Uuid,
+    pub username: String,
+    pub access_token: String,
+    pub refresh_token: String,
+}
+
+pub enum UserRefreshTokenError {
+    UserNotFound,
+    InternalError,
+    UuidParseError,
+}
+
 pub enum UserRegistrationError {
     LoginExists,
     UsernameExists,
@@ -53,6 +66,16 @@ impl Into<UserRegistrationError> for UserDatabaseError {
             UserDatabaseError::UserNotFound => UserRegistrationError::UserNotFound,
             UserDatabaseError::UuidParseError => UserRegistrationError::UuidParseError,
             UserDatabaseError::DatabaseError => UserRegistrationError::InternalError,
+        }
+    }
+}
+
+impl Into<UserAuthError> for UserDatabaseError {
+    fn into(self) -> UserAuthError {
+        match self {
+            UserDatabaseError::UserNotFound => UserAuthError::UserNotFound,
+            UserDatabaseError::UuidParseError => UserAuthError::UuidParseError,
+            _ => UserAuthError::InternalError,
         }
     }
 }

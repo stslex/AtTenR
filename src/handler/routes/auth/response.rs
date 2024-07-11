@@ -2,7 +2,10 @@ use rocket::http::Status;
 use serde::Serialize;
 
 use crate::{
-    data::repository::auth::objects::{UserAuthError, UserAuthResponse, UserRegistrationError},
+    data::repository::auth::objects::{
+        UserAuthError, UserAuthResponse, UserRefreshTokenError, UserRefreshTokenResponse,
+        UserRegistrationError,
+    },
     handler::routes::response::{ErrorResponse, ERROR_INTERNAL_ERROR, ERROR_UUID_PARCE_ERROR},
     utils::ErrorParser,
 };
@@ -18,6 +21,17 @@ pub struct LoginOk {
 }
 
 impl Into<LoginOk> for UserAuthResponse {
+    fn into(self) -> LoginOk {
+        LoginOk {
+            uuid: self.uuid.to_string(),
+            username: self.username,
+            access_token: self.access_token,
+            refresh_token: self.refresh_token,
+        }
+    }
+}
+
+impl Into<LoginOk> for UserRefreshTokenResponse {
     fn into(self) -> LoginOk {
         LoginOk {
             uuid: self.uuid.to_string(),
@@ -48,6 +62,16 @@ impl ErrorParser for UserRegistrationError {
             UserRegistrationError::UserNotFound => ERROR_USER_NOT_FOUND,
             UserRegistrationError::UuidParseError => ERROR_UUID_PARCE_ERROR,
             UserRegistrationError::InternalError => ERROR_INTERNAL_ERROR,
+        }
+    }
+}
+
+impl ErrorParser for UserRefreshTokenError {
+    fn parse_error(&self) -> &'static ErrorResponse<'static> {
+        match self {
+            UserRefreshTokenError::UserNotFound => ERROR_USER_NOT_FOUND,
+            UserRefreshTokenError::InternalError => ERROR_INTERNAL_ERROR,
+            UserRefreshTokenError::UuidParseError => ERROR_UUID_PARCE_ERROR,
         }
     }
 }
