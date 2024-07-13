@@ -8,8 +8,8 @@ use crate::{
 use super::{
     jwt::{objects::JwtObject, JwtGenerator},
     objects::{
-        UserAuthError, UserAuthResponse, UserLoginRequest, UserRegistrationError,
-        UserRegistrationRequest,
+        UserAuthError, UserAuthResponse, UserLoginRequest, UserRefreshTokenError,
+        UserRefreshTokenResponse, UserRegistrationError, UserRegistrationRequest,
     },
     AuthRepository,
 };
@@ -21,7 +21,7 @@ impl AuthRepository for Conn {
     ) -> Result<UserAuthResponse, UserRegistrationError> {
         let user_by_login = self.get_user_by_login(user.login).await;
         match user_by_login {
-            Ok(_) => return Err(UserRegistrationError::UsernameExists),
+            Ok(_) => return Err(UserRegistrationError::LoginExists),
             Err(UserDatabaseError::UserNotFound) => (),
             Err(err) => return Err(err.into()),
         }
@@ -66,10 +66,7 @@ impl AuthRepository for Conn {
             .get_user_by_login(user.login)
             .map_err(|err| {
                 print!("Error in get user by login: {:?}", err);
-                match err {
-                    UserDatabaseError::UserNotFound => return UserAuthError::UserNotFound,
-                    _ => UserAuthError::InternalError,
-                }
+                err.into()
             })
             .await?;
 
@@ -98,6 +95,45 @@ impl AuthRepository for Conn {
         .map_err(|err| {
             println!("Error in generate jwt: {:?}", err);
             UserAuthError::InternalError
+        })
+    }
+
+    async fn refresh_token<'a>(
+        &self,
+        uuid: &'a str,
+    ) -> Result<UserRefreshTokenResponse, UserRefreshTokenError> {
+        if uuid.is_empty() {
+            return Err(UserRefreshTokenError::UserNotFound);
+        }
+
+        let user = self.get_user_by_uuid(uuid).await.map_err(|err| {
+            println!("Error in get user by uuid: {:?}", err);
+            return match err {
+                UserDatabaseError::UserNotFound => return UserRefreshTokenError::UserNotFound,
+                UserDatabaseError::UuidParseError => return UserRefreshTokenError::UuidParseError,
+                _ => UserRefreshTokenError::InternalError,
+            };
+        })?;
+
+        if user.uuid.to_string() != uuid {
+            return Err(UserRefreshTokenError::UserNotFound);
+        }
+
+        JwtObject {
+            uuid: &user.uuid.to_string(),
+            username: &user.username,
+        }
+        .generate()
+        .await
+        .map(|jwt| UserRefreshTokenResponse {
+            uuid: user.uuid,
+            username: user.username,
+            access_token: jwt.access_token,
+            refresh_token: jwt.refresh_token,
+        })
+        .map_err(|err| {
+            println!("Error in generate jwt: {:?}", err);
+            UserRefreshTokenError::InternalError
         })
     }
 }

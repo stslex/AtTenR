@@ -4,22 +4,21 @@ use rocket::{Build, Rocket};
 
 use crate::data::repository::auth::objects::{UserLoginRequest, UserRegistrationRequest};
 use crate::data::repository::auth::AuthRepository;
-use crate::handler::routes::auth::request::{LoginRequest, RegistrationRequest};
-use crate::handler::routes::validators::ApiKey;
+use crate::routes::auth::request::{LoginRequest, RegistrationRequest};
+use crate::routes::validators::ApiKey;
+use crate::routes::validators::RefreshToken;
 use crate::utils::{AppHasher, ErrorParser};
 use crate::Conn;
 
 use super::response::LoginOk;
-use super::validator::{
-    FieldValidator, LoginValidatorObject, PasswordValidatorError, PasswordValidatorObject,
-};
+use super::validator::{FieldValidator, LoginValidatorObject, PasswordValidatorObject};
 use super::AuthRoute;
-use crate::handler::routes::response::{ApiResponse, ERROR_INVALID_REQUEST};
+use crate::routes::response::{ApiResponse, ERROR_INVALID_REQUEST};
 
 impl AuthRoute for Rocket<Build> {
     fn mount_auth_route(self, base_url: &str) -> Self {
         let path = format!("{}/auth", base_url);
-        self.mount(path, routes![login, register])
+        self.mount(path, routes![login, register, refresh_token])
     }
 }
 
@@ -85,6 +84,19 @@ async fn register<'a>(
         password: &password_hash.await,
     };
     db.registrarion(user)
+        .map_ok(|user| Json::<LoginOk>(user.into()))
+        .map_err(|err| err.parse_error())
+        .await
+        .into()
+}
+
+#[post("/refresh")]
+async fn refresh_token<'a>(
+    refresh_token: RefreshToken,
+    db: Conn,
+) -> ApiResponse<'static, Json<LoginOk>> {
+    let uuid = refresh_token.uuid;
+    db.refresh_token(&uuid)
         .map_ok(|user| Json::<LoginOk>(user.into()))
         .map_err(|err| err.parse_error())
         .await

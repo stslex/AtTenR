@@ -1,4 +1,4 @@
-use crate::handler::routes::response::ErrorResponse;
+use crate::routes::response::ErrorResponse;
 
 mod hasher;
 mod test;

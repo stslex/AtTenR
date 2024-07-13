@@ -3,15 +3,17 @@ extern crate diesel;
 #[macro_use]
 extern crate rocket;
 
+use catcher::AppCatcher;
 use db::run_db_migrations;
-use handler::{catcher::AppCatcher, routes::Router};
 use rocket::{fairing::AdHoc, Build, Rocket};
 use rocket_sync_db_pools::database;
+use routes::Router;
 
+mod catcher;
 mod config;
 mod data;
 pub mod db;
-mod handler;
+mod routes;
 mod schemas;
 pub mod utils;
 
