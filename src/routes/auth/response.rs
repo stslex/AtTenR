@@ -6,7 +6,7 @@ use crate::{
         UserAuthError, UserAuthResponse, UserRefreshTokenError, UserRefreshTokenResponse,
         UserRegistrationError,
     },
-    handler::routes::response::{ErrorResponse, ERROR_INTERNAL_ERROR, ERROR_UUID_PARCE_ERROR},
+    routes::response::{ErrorResponse, ERROR_INTERNAL_ERROR, ERROR_UUID_PARCE_ERROR},
     utils::ErrorParser,
 };
 

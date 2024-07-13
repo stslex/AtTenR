@@ -8,7 +8,7 @@ mod test_decoder {
 
     use crate::{
         config::{JWT_ACCESS_SECRET, JWT_REFRESH_SECRET},
-        handler::routes::validators::jwt::{DecodeAccessToken, JwtDecoder},
+        routes::validators::jwt::{DecodeAccessToken, JwtDecoder},
     };
 
     const EXPECTED_UUID: &str = "expected_uuid";

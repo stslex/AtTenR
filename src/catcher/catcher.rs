@@ -1,6 +1,6 @@
 use rocket::{catch, catchers, Build, Rocket};
 
-use crate::handler::routes::response::{ErrorResponse, ERROR_UNAUTHORIZED};
+use crate::routes::response::{ErrorResponse, ERROR_UNAUTHORIZED};
 
 use super::AppCatcher;
 

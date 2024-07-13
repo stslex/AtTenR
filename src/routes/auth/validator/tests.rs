@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod test_validators {
-    use crate::handler::routes::auth::validator::{LoginValidatorError, LoginValidatorObject};
+    use crate::routes::auth::validator::{LoginValidatorError, LoginValidatorObject};
 
     use super::super::{FieldValidator, PasswordValidatorError, PasswordValidatorObject};
 

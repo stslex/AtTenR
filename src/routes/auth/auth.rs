@@ -4,16 +4,16 @@ use rocket::{Build, Rocket};
 
 use crate::data::repository::auth::objects::{UserLoginRequest, UserRegistrationRequest};
 use crate::data::repository::auth::AuthRepository;
-use crate::handler::routes::auth::request::{LoginRequest, RegistrationRequest};
-use crate::handler::routes::validators::ApiKey;
-use crate::handler::routes::validators::RefreshToken;
+use crate::routes::auth::request::{LoginRequest, RegistrationRequest};
+use crate::routes::validators::ApiKey;
+use crate::routes::validators::RefreshToken;
 use crate::utils::{AppHasher, ErrorParser};
 use crate::Conn;
 
 use super::response::LoginOk;
 use super::validator::{FieldValidator, LoginValidatorObject, PasswordValidatorObject};
 use super::AuthRoute;
-use crate::handler::routes::response::{ApiResponse, ERROR_INVALID_REQUEST};
+use crate::routes::response::{ApiResponse, ERROR_INVALID_REQUEST};
 
 impl AuthRoute for Rocket<Build> {
     fn mount_auth_route(self, base_url: &str) -> Self {
