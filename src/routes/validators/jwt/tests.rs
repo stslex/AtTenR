@@ -8,7 +8,7 @@ mod test_decoder {
 
     use crate::{
         config::{JWT_ACCESS_SECRET, JWT_REFRESH_SECRET},
-        routes::validators::jwt::{DecodeAccessToken, JwtDecoder},
+        routes::validators::jwt::{DecodeAccessToken, DecodeRefreshToken, JwtDecoder},
     };
 
     const EXPECTED_UUID: &str = "expected_uuid";
@@ -33,7 +33,7 @@ mod test_decoder {
     fn test_decode_refresh() {
         env::set_var(JWT_REFRESH_SECRET, SECRET_TEST);
 
-        let result = DecodeAccessToken {
+        let result = DecodeRefreshToken {
             token: &get_test_token(),
         }
         .decode();
