@@ -1,7 +1,7 @@
 use objects::{ToDoEntity, TodoDatabaseError, TodoEntityCreate};
 
 mod database;
-mod objects;
+pub mod objects;
 mod test;
 
 pub trait ToDoDatabase {
