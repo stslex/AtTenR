@@ -104,10 +104,7 @@ mod tests {
 
         let get_result = connection.get_by_uuid(&inserted.uuid.to_string()).await;
         assert!(get_result.is_err());
-        assert_eq!(
-            remove_result.err().unwrap(),
-            TodoDatabaseError::TodoNotFound
-        )
+        assert_eq!(get_result.unwrap_err(), TodoDatabaseError::TodoNotFound)
     }
 
     #[tokio::test]
@@ -115,9 +112,6 @@ mod tests {
         let connection = run_migration_get_conn().await.unwrap();
         let remove_result = connection.remove_by_uuid(&Uuid::new_v4().to_string()).await;
         assert!(remove_result.is_err());
-        assert_eq!(
-            remove_result.err().unwrap(),
-            TodoDatabaseError::TodoNotFound
-        )
+        assert_eq!(remove_result.unwrap_err(), TodoDatabaseError::TodoNotFound)
     }
 }
