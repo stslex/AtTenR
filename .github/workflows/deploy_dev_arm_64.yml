@@ -60,7 +60,7 @@ jobs:
         uses: docker/build-push-action@v4.1.1
         with:
           push: true
-          tags: stslex/atten:dev
+          tags: stslex/atten_arm64:dev
           platforms: linux/arm64
           context: .
 
