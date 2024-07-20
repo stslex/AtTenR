@@ -1,18 +1,9 @@
-use crate::{
-    data::{
-        database::{
-            todo::{objects::TodoEntityCreate, ToDoDatabase},
-            user::UserDatabase,
-        },
-        repository::todo::objects::ToDoDataStatus,
-    },
-    Conn,
-};
-
-use super::{
-    objects::{ToDoCreateError, ToDoDataCreateRequest, ToDoDataGetError, ToDoDataResponse},
-    ToDoRepository,
-};
+use super::objects::{ToDoCreateError, ToDoDataCreateRequest, ToDoDataGetError, ToDoDataResponse};
+use super::ToDoRepository;
+use crate::data::database::todo::{objects::TodoEntityCreate, ToDoDatabase};
+use crate::data::database::user::UserDatabase;
+use crate::data::repository::todo::objects::ToDoDataStatus;
+use crate::Conn;
 
 impl ToDoRepository for Conn {
     async fn create<'a>(
@@ -41,19 +32,36 @@ impl ToDoRepository for Conn {
             .map(|entity| entity.into())
             .map_err(|err| err.into())
     }
-    async fn get_todo_by_uuid<'a>(
+
+    async fn remove_todo_by_uuid<'a>(
         &self,
+        user_uuid: &'a str,
         uuid: &'a str,
-    ) -> Result<ToDoDataResponse, ToDoDataGetError> {
-        self.get_by_uuid(uuid)
-            .await
-            .map(|entity| entity.into())
-            .map_err(|err| err.into())
-    }
-    async fn remove_todo_by_uuid<'a>(&self, uuid: &'a str) -> Result<(), ToDoDataGetError> {
+    ) -> Result<(), ToDoDataGetError> {
+        let entity = self.get_by_uuid(uuid).await.map_err(|err| err.into())?;
+        if entity.user_uuid.to_string() != user_uuid {
+            return Err(ToDoDataGetError::UserNotMatchError);
+        };
         self.remove_by_uuid(uuid)
             .await
             .map_err(|err| err.into())
             .map(|_| ())
+    }
+
+    async fn get_todo_by_uuid<'a>(
+        &self,
+        user_uuid: &'a str,
+        uuid: &'a str,
+    ) -> Result<ToDoDataResponse, ToDoDataGetError> {
+        match self.get_by_uuid(uuid).await {
+            Ok(entity) => {
+                if entity.user_uuid.to_string() != user_uuid {
+                    Err(ToDoDataGetError::UserNotMatchError)
+                } else {
+                    Ok(entity.into())
+                }
+            }
+            Err(err) => Err(err.into()),
+        }
     }
 }

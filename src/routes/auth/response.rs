@@ -6,7 +6,9 @@ use crate::{
         UserAuthError, UserAuthResponse, UserRefreshTokenError, UserRefreshTokenResponse,
         UserRegistrationError,
     },
-    routes::response::{ErrorResponse, ERROR_INTERNAL_ERROR, ERROR_UUID_PARCE_ERROR},
+    routes::response::{
+        ErrorResponse, ERROR_INTERNAL_ERROR, ERROR_USER_NOT_FOUND, ERROR_UUID_PARCE_ERROR,
+    },
     utils::ErrorParser,
 };
 
@@ -101,11 +103,6 @@ impl ErrorParser for LoginValidatorError {
 pub const ERROR_USER_ALREADY_EXIST: &'static ErrorResponse<'static> = &ErrorResponse {
     status: Status::Conflict,
     message: "user already exists",
-};
-
-pub const ERROR_USER_NOT_FOUND: &'static ErrorResponse<'static> = &ErrorResponse {
-    status: Status::NotFound,
-    message: "user not found",
 };
 
 pub const ERROR_INVALID_PASSWORD: &'static ErrorResponse<'static> = &ErrorResponse {

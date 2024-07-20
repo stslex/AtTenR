@@ -10,7 +10,12 @@ pub trait ToDoRepository {
     ) -> Result<ToDoDataResponse, ToDoCreateError>;
     async fn get_todo_by_uuid<'a>(
         &self,
+        user_uuid: &'a str,
         uuid: &'a str,
     ) -> Result<ToDoDataResponse, ToDoDataGetError>;
-    async fn remove_todo_by_uuid<'a>(&self, uuid: &'a str) -> Result<(), ToDoDataGetError>;
+    async fn remove_todo_by_uuid<'a>(
+        &self,
+        user_uuid: &'a str,
+        uuid: &'a str,
+    ) -> Result<(), ToDoDataGetError>;
 }

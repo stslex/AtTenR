@@ -72,3 +72,18 @@ pub const ERROR_UUID_PARCE_ERROR: &'static ErrorResponse<'static> = &ErrorRespon
     status: Status::BadRequest,
     message: "uuid parse error",
 };
+
+pub const ERROR_REQUEST_INVALID_FIELDS: &'static ErrorResponse<'static> = &ErrorResponse {
+    status: Status::BadRequest,
+    message: "invalid fields in request",
+};
+
+pub const ERROR_USER_NOT_FOUND: &'static ErrorResponse<'static> = &ErrorResponse {
+    status: Status::NotFound,
+    message: "user not found",
+};
+
+pub const ERROR_NOT_FOUND: &'static ErrorResponse<'static> = &ErrorResponse {
+    status: Status::NotFound,
+    message: "not found",
+};
