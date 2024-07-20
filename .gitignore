@@ -4,3 +4,4 @@
 /Cargo.lock
 /.env
 /postgres.env
+/.docker_ignore

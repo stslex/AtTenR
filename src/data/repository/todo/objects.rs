@@ -1,3 +1,5 @@
+use chrono::DateTime;
+use rocket::http::Status;
 use uuid::Uuid;
 
 use crate::data::database::{
@@ -30,7 +32,11 @@ impl Into<ToDoDataResponse> for ToDoEntity {
             user_uuid: self.user_uuid,
             title: self.title,
             description: self.description,
-            status: self.status,
+            status: if (chrono::Utc::now().timestamp_millis() > self.expires_at) {
+                ToDoDataStatus::Expired.into()
+            } else {
+                self.status
+            },
             created_at: self.created_at,
             updated_at: self.updated_at,
             expires_at: self.expires_at,
@@ -86,6 +92,7 @@ pub enum ToDoDataGetError {
     UuidParseError,
     NotFound,
     UnresolvedError,
+    UserNotMatchError,
 }
 
 impl Into<ToDoDataGetError> for TodoDatabaseError {
