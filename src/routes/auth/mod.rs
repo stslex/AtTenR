@@ -1,8 +1,3 @@
-mod auth;
-mod request;
-mod response;
+pub mod login;
+mod models;
 mod validator;
-
-pub trait AuthRoute {
-    fn mount_auth_route(self, base_url: &str) -> Self;
-}

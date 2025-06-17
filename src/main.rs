@@ -1,32 +1,27 @@
-#[macro_use]
-extern crate diesel;
-#[macro_use]
-extern crate rocket;
+use actix_web::{web, App, HttpServer};
 
-use catcher::AppCatcher;
-use db::run_db_migrations;
-use rocket::{fairing::AdHoc, Build, Rocket};
-use rocket_sync_db_pools::database;
-use routes::Router;
-
-mod catcher;
+use config::{AppStateConfig, ServiceSertConfig};
+use env_logger::Env;
+use log::info;
+use service::api_v1_service;
 mod config;
-mod data;
-pub mod db;
-mod routes;
-mod schemas;
-pub mod utils;
+pub mod routes;
+pub mod schemas;
+mod service;
 
-#[rocket::launch]
-async fn launch() -> Rocket<Build> {
-    dotenv::dotenv().ok();
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    dotenvy::dotenv().ok();
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    rocket::custom(config::from_env())
-        .attach(Conn::fairing())
-        .attach(AdHoc::on_ignite("Database Migrations", run_db_migrations))
-        .mount_catcher()
-        .mount_routes()
+    info!("Starting server...");
+
+    HttpServer::new(|| {
+        App::new()
+            .bind_app_state()
+            .service(web::scope("/api").configure(api_v1_service))
+    })
+    .bind_simple_server()
+    .run()
+    .await
 }
-
-#[database("diesel_postgres_pool")]
-pub struct Conn(pub diesel::PgConnection);
