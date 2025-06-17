@@ -4,7 +4,6 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-#[async_trait]
 impl AppHasher for str {
     async fn hash(&self) -> String {
         let mut hasher = DefaultHasher::new();

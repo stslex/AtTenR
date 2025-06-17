@@ -1,18 +1,21 @@
-use crate::routes::response::ErrorResponse;
+use serde::Deserialize;
 
 mod hasher;
 mod test;
 
-#[async_trait]
 pub trait AppHasher {
     async fn hash(&self) -> String;
 }
 
-#[async_trait]
 pub trait AsyncInto<T> {
     async fn async_into(&self) -> T;
 }
 
-pub trait ErrorParser {
-    fn parse_error(&self) -> &'static ErrorResponse<'static>;
+pub trait Validator<'a, D, E>
+where
+    D: Deserialize<'a>,
+{
+    fn validate(self) -> Result<Box<D>, &'static E>
+    where
+        Self: Sized;
 }
