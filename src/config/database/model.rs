@@ -1,5 +1,6 @@
 pub enum ErrorResponseData {
-    UserAlreadyExists,
+    AlreadyExists,
+    NotFound,
     InternalServerError,
     BlockingError,
 }

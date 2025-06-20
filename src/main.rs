@@ -5,6 +5,8 @@ use env_logger::Env;
 use log::info;
 use service::api_v1_service;
 mod config;
+pub mod database;
+pub mod repository;
 pub mod routes;
 pub mod schemas;
 mod service;

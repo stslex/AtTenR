@@ -1,9 +1,10 @@
 diesel::table! {
-    users(uuid) {
+    users (uuid) {
         uuid -> Uuid,
-        login -> Varchar,
-        secret -> Text,
-        username -> Varchar,
+        google_id -> Text,
+        email -> Text,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 

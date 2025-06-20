@@ -11,6 +11,12 @@ pub struct LoginRequest {
     pub password: String,
 }
 
+#[derive(Deserialize)]
+pub struct GoogleAuthRequest {
+    #[serde(rename = "id_token")]
+    pub id_token: String,
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct RegistrationRequest {
     #[serde(rename = "login")]

@@ -1,6 +1,5 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use auth::auth_api_service;
-use guard::api_key_guard;
 
 use crate::config::AppState;
 
@@ -10,7 +9,7 @@ mod guard;
 pub fn api_v1_service(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/v1")
-            .guard(api_key_guard())
+            // .guard(api_key_guard())
             .configure(auth_api_service)
             .service(hello),
     );
