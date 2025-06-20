@@ -1,6 +1,5 @@
 use super::{FieldValidator, LoginValidatorError, LoginValidatorObject};
 
-#[async_trait]
 impl<'a> FieldValidator<String, LoginValidatorError> for LoginValidatorObject<'a> {
     async fn validate(&self) -> Result<String, LoginValidatorError> {
         // Login must be at least 4 characters long

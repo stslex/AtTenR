@@ -1,6 +1,5 @@
 use super::{FieldValidator, PasswordValidatorError, PasswordValidatorObject};
 
-#[async_trait]
 impl<'a> FieldValidator<String, PasswordValidatorError> for PasswordValidatorObject<'a> {
     async fn validate(&self) -> Result<String, PasswordValidatorError> {
         // Password must be at least 8 characters long

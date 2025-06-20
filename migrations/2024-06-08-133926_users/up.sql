@@ -1,13 +1,15 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-create table IF NOT EXISTS users
-(
-    uuid UUID DEFAULT uuid_generate_v4() not NULL constraint table_name_pk primary key,
-    login VARCHAR(128) not NULL,
-    username VARCHAR(128) not NULL,
-    secret VARCHAR(128) not NULL
+
+CREATE TABLE users (
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    google_id VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 create unique index IF NOT EXISTS users_uuid_uindex on users (uuid);
-create unique index IF NOT EXISTS users_login_uindex on users (login);
-create unique index IF NOT EXISTS users_username_uindex on users (username);
-create index IF NOT EXISTS users_secret_uindex on users (secret);
+create unique index IF NOT EXISTS users_google_id_uindex on users (google_id);
+create unique index IF NOT EXISTS users_email_uindex on users (email);
+create index IF NOT EXISTS users_created_at_index on users (created_at);
+create index IF NOT EXISTS users_updated_at_index on users (updated_at);

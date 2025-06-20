@@ -1,8 +1,4 @@
-mod auth;
-mod request;
-mod response;
+pub mod google;
+mod google_verifier;
+mod models;
 mod validator;
-
-pub trait AuthRoute {
-    fn mount_auth_route(self, base_url: &str) -> Self;
-}

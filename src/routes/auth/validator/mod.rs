@@ -2,7 +2,6 @@ mod login;
 mod password;
 mod tests;
 
-#[async_trait]
 pub trait FieldValidator<T, Error> {
     async fn validate(&self) -> Result<T, Error>;
 }
