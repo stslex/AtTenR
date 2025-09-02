@@ -9,9 +9,7 @@ where
 {
     fn bind_app_state(self) -> Self {
         self.app_data(web::Data::new(create_db_pool().clone()))
-            .app_data(web::Data::new(AppState {
-                app_name: "Cinematch",
-            }))
+            .app_data(web::Data::new(AppState { app_name: "Atten" }))
     }
     #[cfg(test)]
     fn bind_app_state_for_tests(self) -> Self {
@@ -19,7 +17,7 @@ where
 
         self.app_data(web::Data::new(create_test_db_pool().clone()))
             .app_data(web::Data::new(AppState {
-                app_name: "Cinematch_test",
+                app_name: "Atten_test",
             }))
     }
 }

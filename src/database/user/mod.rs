@@ -1,5 +1,3 @@
-use std::io::Error;
-
 use diesel::{ExpressionMethods, OptionalExtension, PgConnection, QueryDsl, RunQueryDsl};
 use log::error;
 use model::{GoogleTokenInfo, UserDbModel};
