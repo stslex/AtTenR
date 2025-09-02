@@ -5,3 +5,6 @@
 /.env
 /postgres.env
 /.docker_ignore
+/.vscode
+/.zed
+/.DS_Store
